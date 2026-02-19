@@ -1,0 +1,29 @@
+/*hier wird beschreiben was der Tag p für beschreibene styles hat in diesem fall sieht man 
+die grösse wurde auf 1.5 em gesetzt die schriftart auf sans.serfif, text farbe auf rot hintergrungfarbe auf schwarz
+und der Text ist gesetzt das es in der mitte fixiert ist kann man sich vorstelle wie in Word, dass der Text in der mitte 
+gesetzt wird*/
+p {
+  /*em ist auf 16 pixels gesetzt das heisst wenn an 0.9 em macht ist die rechnung 16 (px) * 0.9 = 14.4 px*/
+  font-size: 1.5em;
+  font-family: sans-serif;
+  color: red;
+  background-color: black;
+  text-align: center;
+}
+
+#example ul {
+  /*hier wird die schriftart auf 1.5 em gesetzt und die schriftfarbe auf blau und der hintergrund auf gelb*/
+  font-size: 1.5em;
+  color: blue;
+  background-color: yellow;
+}
+
+/* ändert die farbe bei einer Bildschirm grösse von 90em (81px)*/
+@media (min-width: 90em) {
+  /*hier wird die schriftart auf 1.5 em gesetzt und die schriftfarbe auf blau und der hintergrund auf gelb*/
+  #example ul {
+    font-size: 1.5em;
+    color: red;
+    background-color: yellow;
+  }
+}

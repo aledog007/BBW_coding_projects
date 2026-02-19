@@ -1,0 +1,6 @@
+UPDATE ACTOR
+SET
+    FIRST_NAME = 'Peter',
+    LAST_NAME = 'West'
+WHERE
+    ACTOR_ID = 115;

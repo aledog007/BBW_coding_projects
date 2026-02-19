@@ -1,0 +1,72 @@
+<!--hier wird es beschreieben welche version von html verwendet wird-->
+<!DOCTYPE html>
+<html lang="de">
+  <!--um den oberen Teil einer Webseite zu definieren. Dieser Abschnitt kann Elemente enthalten, die die Identität der Seite 
+        beschreiben, wie zum Beispiel das Logo, den Seitentitel, Navigationslinks und andere Inhalte, die nicht direkt im Hauptinhalt 
+        der Seite angezeigt werden. Darüber hinaus können im <header>-Bereich auch Verweise auf Dateien wie Skripte und Stylesheets enthalten sein, die für das Design und die Funktionalität der Seite wichtig sind.-->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--hier steht was auf dem tab steht-->
+    <title>BBW_Hausaufgaben</title>
+    <!--hier wurde das css und weitere dateien eingebunden das beispiel hier ist stylesheet.css-->
+    <link rel="stylesheet" href="css/stylesheet.css" />
+  </head>
+  <header>
+    <a id="backlink" href="/"><img src="img/table.svg" alt="Startseite"></a>
+    <p>Schreinerei Meier</p>
+    <p>Ihre Werkstatt für gutes Wohnen!</p>
+  </header>
+  <!--der Body ist dort wo alles rein kommt und visuell darstzellt-->
+  <body>
+    <h1>Schreinerei Meier, ihre Werkstatt für gutes Wohnen</h1>
+    <!-- Das sind für absteze da man kann höchstens 2 rein tun-->
+    <br />
+    <!--für einen Paragraph (normaler text)-->
+    <p>
+      Wir sind seit vielen Jahren darauf spezialisiert, alle Kundenwünsche zu
+      erfüllen. In unserer Werkstatt produzieren wir selbst - mit
+      <!--hier wird der Text Holz einem link zu geteilt-->
+      <a
+        href="https://www.holzplatten.ch/?gad_source=1&gclid=EAIaIQobChMInKuum6y1hAMVq4RoCR3w_wxCEAAYASAAEgIk3_D_BwE"
+      >
+        Holz
+      </a>
+      aus regionaler, nachhaltiger Forstwirtschaft.
+    </p>
+    <!-- hier ist eine id und im css definiert es nun das alle im rahmen von example sind (ul) eine vor eingstellte farbe hat-->
+    <aside id="example">
+    <!--für eine ordetlist also mit punkt °-->
+    <li>Möbel nach Ihren Wünschen</li>
+    <br />
+    <li>Haustüren</li>
+    <!-- Für eine unordetlist  list also ohne punkt und einem absatz-->
+    <ul>
+      Gartenzäune
+    </ul>
+    <ul>
+      Reparaturen
+    </ul>
+    </aside>
+    <!--hier habe ich ein bild eingebetet und einen alternativ text hinzugefügt und ebenfalls mit css die höhe und länge definiert-->
+    <img
+      src="img/bild.jpg"
+      alt="Bild für Hausaufgaben"
+      width="200em"
+      height="200em"
+    />
+    <!-- hier habe ich ein video verlinkt und ebenfalls es einerseits wieder angepasst von der höhe etc und ebenfalls contols mitgegeben um das video zum steuern bzw vorspullen etc -->
+    <video
+      controls
+      width="640em"
+      height="480em"
+      src="https://upload.wikimedia.org/wikipedia/commons/transcoded/e/e1/Carpentry.ogv/Carpentry.ogv.480p.vp9.webm"
+      type="video"
+    </video>
+      <footer>
+     <a href="kontakt.html">Kontakt</a>
+     <a href="impressum.html">Impressum</a>
+     <p>© 2021 by selfHTML</p>
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+/*hier wird beschreiben was der Tag p für beschreibene styles hat in diesem fall sieht man 
+die grösse wurde auf 1.5 em gesetzt die schriftart auf sans.serfif, text farbe auf rot hintergrungfarbe auf schwarz
+und der Text ist gesetzt das es in der mitte fixiert ist kann man sich vorstelle wie in Word, dass der Text in der mitte 
+gesetzt wird*/
+p {
+  /*em ist auf 16 pixels gesetzt das heisst wenn an 0.9 em macht ist die rechnung 16 (px) * 0.9 = 14.4 px*/
+  font-size: 1.5em;
+  font-family: sans-serif;
+  color: red;
+  background-color: black;
+  text-align: center;
+}
+
+table,
+th,
+td,
+caption {
+  border: thin solid #a0a0a0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-width: thin 0 0 thin;
+  margin: 0 0 1em;
+  table-layout: auto;
+  max-width: 100%;
+}
+th,
+td {
+  font-weight: normal;
+  text-align: left;
+}
+th,
+caption {
+  background-color: #f1f3f4;
+  font-weight: 700;
+}

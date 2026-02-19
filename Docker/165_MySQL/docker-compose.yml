@@ -1,0 +1,30 @@
+#mysql, phypmyadmin and car-db
+version: '3.9'
+
+services:
+   mysql:
+      image: mysql:latest
+      container_name: mysql165
+      command: mysqld
+      environment:
+         MYSQL_USER: user
+         MYSQL_PASSWORD: 1234
+         MYSQL_ROOT_PASSWORD: 1234
+         MYSQL_DATABASE: default_schema
+      volumes:
+         - ./initcar.sql:/docker-entrypoint-initdb.d/1.sql
+      ports:
+         - 3306:3306
+      
+   app:
+      depends_on:
+         - mysql
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin165sql
+      ports:
+         - '80:80'
+      environment:
+         PMA_HOST: mysql
+        
+volumes:
+    dbdata:      

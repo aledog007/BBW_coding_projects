@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webhook abfrage</title>
+</head>
+<body>
+  <form action="https://webhook.site/23acfea0-833a-414e-93f8-189f8436c643" method="get">
+    <label for="nachname">Nachname:</label>
+    <input type="text" id="nachname" name="nachname"><br>
+
+    <label for="vorname">Vorname:</label>
+    <input type="text" id="vorname" name="vorname"><br>
+
+    <label for="datum">Datum:</label>
+    <input type="date" id="datum" name="datum"><br><br>
+
+    <label>EntwicklerIn-Typ:</label><br>
+    <input type="radio" id="applikationsentwickler" name="entwickler_typ" value="ApplikationsentwicklerIn">
+    <label for="applikationsentwickler">ApplikationsentwicklerIn</label><br>
+
+    <input type="radio" id="plattformentwickler" name="entwickler_typ" value="PlattformentwicklerIn">
+    <label for="plattformentwickler">PlattformentwicklerIn</label><br>
+
+    <input type="radio" id="digital_business_entwickler" name="entwickler_typ" value="EntwicklerIn Digital Business">
+    <label for="digital_business_entwickler">EntwicklerIn Digital Business</label><br><br>
+
+    <label for="dropdown">Dropdown-Liste:</label>
+    <select id="dropdown" name="dropdown">
+      <option value="option1">Tick</option>
+      <option value="option2">Trick</option>
+      <option value="option3">Track</option>
+    </select><br><br>
+
+    <input type="submit" value="Absenden">
+  </form>
+</body>
+</html>
+
