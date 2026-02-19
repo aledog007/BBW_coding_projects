@@ -1,7 +1,7 @@
 /**
  * Main Class Führt alle Rekursions-Beispiele zusammen
  * @author Alessio Fano
- * @version 03.02.2026
+ * @version 19.02.2026
  */
 public class Main {
 
