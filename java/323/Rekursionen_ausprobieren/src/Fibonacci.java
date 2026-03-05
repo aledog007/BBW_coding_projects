@@ -18,6 +18,7 @@ public class Fibonacci {
             return value;
         }
         return calculate(value - 1) + calculate(value - 2);
+
         // Treppe AI Genereriert:
         // Rekursiver Aufruf: Summe der zwei vorhergehenden Zahlen
         //

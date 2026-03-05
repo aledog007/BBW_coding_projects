@@ -1,6 +1,6 @@
 /**
  * Palindrom Class
- * * @author Alessio Fano
+ * @author Alessio Fano
  * @version 19.02.2026
  */
 public class Palindrom {
@@ -17,8 +17,21 @@ public class Palindrom {
         }
     }
 
+    public static boolean isPalindrom(char[] data, int front, int rear) {
+        // Abbruchbedingung
+        if (front >= rear) {
+            return true;
+        }
+        // Rekursiver Schritt
+        if (data[front] == data[rear]) {
+            return isPalindrom(data, front + 1, rear - 1);
+        }
+        return false;
+    }
+}
+
+
     /**
-     * Doku Generiert
      * Rekursive Prüfung auf Palindrom
      *
      * Beispiel für "OTTO" (→ "otto" = ['o','t','t','o']):
@@ -39,15 +52,3 @@ public class Palindrom {
      * - Sobald front >= rear, sind alle Zeichen überprüft → true
      * - Wenn irgendwann zwei Zeichen nicht passen → false
      */
-    public static boolean isPalindrom(char[] data, int front, int rear) {
-        // Abbruchbedingung
-        if (front >= rear) {
-            return true;
-        }
-        // Rekursiver Schritt
-        if (data[front] == data[rear]) {
-            return isPalindrom(data, front + 1, rear - 1);
-        }
-        return false;
-    }
-}

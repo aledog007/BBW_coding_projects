@@ -12,25 +12,6 @@ public class GGT {
         System.out.println("Ergebnis: " + gcd(x, y));
     }
 
-    /**
-     * Rekursive Methode zur Berechnung des ggT (Euklidischer Algorithmus)
-     *
-     * Beispiel für gcd(28, 20):
-     *
-     * gcd(28, 20)
-     *    rest = 28 % 20 = 8
-     *    rest != 0, also: gcd(20, 8)
-     *       rest = 20 % 8 = 4
-     *       rest != 0, also: gcd(8, 4)
-     *          rest = 8 % 4 = 0
-     *          rest == 0, also: return 4 ← Abbruch!
-     *       ← return 4 (zurück)
-     *    ← return 4 (zurück)
-     * ← return 4 (Endergebnis)
-     *
-     * Die Rekursion "klettert" nach unten, bis x durch y teilbar ist (rest = 0).
-     * Dann stoppt sie und gibt das Ergebnis zurück.
-     */
     public static int gcd(int x, int y) {
         int rest = x % y;
         if (rest == 0) {
@@ -40,3 +21,23 @@ public class GGT {
         }
     }
 }
+
+/**
+ * Rekursive Methode zur Berechnung des ggT
+ *
+ * Beispiel für gcd(28, 20):
+ *
+ * gcd(28, 20)
+ *    rest = 28 % 20 = 8
+ *    rest != 0, also: gcd(20, 8)
+ *       rest = 20 % 8 = 4
+ *       rest != 0, also: gcd(8, 4)
+ *          rest = 8 % 4 = 0
+ *          rest == 0, also: return 4 ← Abbruch!
+ *       ← return 4 (zurück)
+ *    ← return 4 (zurück)
+ * ← return 4 (Endergebnis)
+ *
+ * Die Rekursion "klettert" nach unten, bis x durch y teilbar ist (rest = 0).
+ * Dann stoppt sie und gibt das Ergebnis zurück.
+ */
