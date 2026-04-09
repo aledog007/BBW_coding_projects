@@ -1,26 +1,40 @@
 package ch.bbw.pr.tresorbackend.controller;
 
-import ch.bbw.pr.tresorbackend.model.*;
-import ch.bbw.pr.tresorbackend.service.PasswordEncryptService;
-import ch.bbw.pr.tresorbackend.service.UserService;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import ch.bbw.pr.tresorbackend.model.EmailAdress;
+import ch.bbw.pr.tresorbackend.model.LoginResponse;
+import ch.bbw.pr.tresorbackend.model.LoginUser;
+import ch.bbw.pr.tresorbackend.model.RegisterUser;
+import ch.bbw.pr.tresorbackend.model.User;
+import ch.bbw.pr.tresorbackend.service.PasswordEncryptService;
+import ch.bbw.pr.tresorbackend.service.UserService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 /**
  * UserController
+ * 
  * @author Peter Rutschmann
  */
 @RestController
@@ -35,13 +49,14 @@ public class UserController {
    // build create User REST API
    @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping
-   public ResponseEntity<String> createUser(@Valid @RequestBody RegisterUser registerUser, BindingResult bindingResult) {
-      //captcha
-      //todo add implementation
+   public ResponseEntity<String> createUser(@Valid @RequestBody RegisterUser registerUser,
+         BindingResult bindingResult) {
+      // captcha
+      // todo add implementation
 
       System.out.println("UserController.createUser: captcha passed.");
 
-      //input validation
+      // input validation
       if (bindingResult.hasErrors()) {
          List<String> errors = bindingResult.getFieldErrors().stream()
                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
@@ -59,18 +74,17 @@ public class UserController {
       }
       System.out.println("UserController.createUser: input validation passed");
 
-      //password validation
-      //todo add implementation
+      // password validation
+      // todo add implementation
       System.out.println("UserController.createUser, password validation passed");
 
-      //transform registerUser to user
+      // transform registerUser to user
       User user = new User(
             null,
             registerUser.getFirstName(),
             registerUser.getLastName(),
             registerUser.getEmail(),
-            passwordService.hashPassword(registerUser.getPassword())
-            );
+            passwordService.hashPassword(registerUser.getPassword()));
 
       User savedUser = userService.createUser(user);
       JsonObject obj = new JsonObject();
@@ -92,7 +106,8 @@ public class UserController {
    @GetMapping("{id}")
    public ResponseEntity<User> getUserById(@PathVariable("id") Long userId) {
       User user = userService.getUserById(userId);
-      if (user == null) return ResponseEntity.notFound().build();
+      if (user == null)
+         return ResponseEntity.notFound().build();
       return new ResponseEntity<>(user, HttpStatus.OK);
    }
 
@@ -102,7 +117,8 @@ public class UserController {
    @GetMapping
    public ResponseEntity<List<User>> getAllUsers() {
       List<User> users = userService.getAllUsers();
-      if (users.isEmpty()) return ResponseEntity.notFound().build();
+      if (users.isEmpty())
+         return ResponseEntity.notFound().build();
       return new ResponseEntity<>(users, HttpStatus.OK);
    }
 
@@ -111,10 +127,11 @@ public class UserController {
    @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PutMapping("{id}")
    public ResponseEntity<User> updateUser(@PathVariable("id") Long userId,
-                                          @RequestBody User user) {
+         @RequestBody User user) {
       user.setId(userId);
       User updatedUser = userService.updateUser(user);
-      if (updatedUser == null) return ResponseEntity.notFound().build();
+      if (updatedUser == null)
+         return ResponseEntity.notFound().build();
       return new ResponseEntity<>(updatedUser, HttpStatus.OK);
    }
 
@@ -122,7 +139,7 @@ public class UserController {
    @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @DeleteMapping("{id}")
    public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
-      if( userService.deleteUser(userId))
+      if (userService.deleteUser(userId))
          return new ResponseEntity<>("User successfully deleted!", HttpStatus.OK);
       return ResponseEntity.notFound().build();
    }
@@ -132,7 +149,7 @@ public class UserController {
    @PostMapping("/byemail")
    public ResponseEntity<String> getUserIdByEmail(@RequestBody EmailAdress email, BindingResult bindingResult) {
       System.out.println("UserController.getUserIdByEmail: " + email);
-      //input validation
+      // input validation
       if (bindingResult.hasErrors()) {
          List<String> errors = bindingResult.getFieldErrors().stream()
                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
@@ -177,19 +194,26 @@ public class UserController {
 
       if (bindingResult.hasErrors()) {
          String errorMessage = bindingResult.getFieldErrors().stream()
-                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
-                 .collect(Collectors.joining("; "));
+               .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+               .collect(Collectors.joining("; "));
          return ResponseEntity.badRequest().body(new LoginResponse(errorMessage, null));
       }
 
       User user = userService.findByEmail(loginUser.getEmail());
       if (user == null) {
          System.out.println("UserController.doLoginUser: user not found");
-         return ResponseEntity.badRequest().body(new LoginResponse("No user found with this email", null));
+         // Security Best Practice: Generische Meldung verhindert User-Enumeration.
+         return ResponseEntity.badRequest().body(new LoginResponse("E-Mail oder Passwort ist falsch", null));
       }
 
-      //ToDo: add verification for password match: loginUser.getPassword() vs user.getPassword
-      //todo add implementation
+      // Passwort-Verifizierung:
+      // Wir vergleichen das Klartext-Passwort vom Login-Formular mit dem Hash aus der
+      // DB.
+      // Die Methode 'doPasswordMatch' kümmert sich intern um die Pepper-Logik.
+      if (!passwordService.doPasswordMatch(loginUser.getPassword(), user.getPassword())) {
+         System.out.println("UserController.doLoginUser: password verification failed");
+         return ResponseEntity.badRequest().body(new LoginResponse("E-Mail oder Passwort ist falsch", null));
+      }
 
       System.out.println("UserController.doLoginUser: login successful");
       return ResponseEntity.ok(new LoginResponse("Login successful", user.getId()));
