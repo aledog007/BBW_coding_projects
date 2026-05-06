@@ -1,38 +1,189 @@
-.App {
-  text-align: center;
+/* --- Premium Secrets Dashboard Styles --- */
+
+.secrets-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.secrets-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
+}
+
+.secrets-header h1 {
+  font-size: 1.8rem;
+  color: #1e293b;
+  margin: 0;
+}
+
+.error-banner {
+  background-color: #fee2e2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.secrets-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.secrets-table th {
+  background-color: #f8fafc;
+  padding: 15px 20px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.secret-row {
+  border-top: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+.secret-row:hover {
+  background-color: #f8fafc;
+}
+
+.secrets-table td {
+  padding: 15px 20px;
+  vertical-align: middle;
+}
+
+/* --- Badges --- */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-credential { background-color: #dcfce7; color: #166534; }
+.badge-creditcard { background-color: #dbeafe; color: #1e40af; }
+.badge-note { background-color: #fef3c7; color: #92400e; }
+.badge-unknown { background-color: #f1f5f9; color: #475569; }
+
+/* --- Details & Links --- */
+.secret-details p { margin: 4px 0; color: #475569; }
+.secret-link { color: #2563eb; text-decoration: none; border-bottom: 1px solid transparent; }
+.secret-link:hover { border-bottom-color: #2563eb; }
+.secret-note-preview { font-style: italic; color: #64748b !important; }
+
+/* --- Buttons --- */
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.btn-refresh { background-color: #2563eb; color: white; }
+.btn-refresh:hover { background-color: #1d4ed8; }
+
+.btn-edit { background-color: #f1f5f9; color: #475569; margin-right: 8px; }
+.btn-edit:hover { background-color: #e2e8f0; color: #1e293b; }
+
+.btn-delete { background-color: #fee2e2; color: #dc2626; }
+.btn-delete:hover { background-color: #fecaca; }
+
+.btn-save { background-color: #10b981; color: white; }
+.btn-save:hover { background-color: #059669; }
+
+.btn-cancel { background-color: #94a3b8; color: white; }
+
+/* --- Modal --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.75);
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
 }
 
-.App-link {
-  color: #61dafb;
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.form-group input, .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
 }

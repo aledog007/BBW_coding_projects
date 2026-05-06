@@ -29,6 +29,7 @@ import ch.bbw.pr.tresorbackend.model.RegisterUser;
 import ch.bbw.pr.tresorbackend.model.User;
 import ch.bbw.pr.tresorbackend.service.PasswordEncryptService;
 import ch.bbw.pr.tresorbackend.service.UserService;
+import ch.bbw.pr.tresorbackend.util.EncryptUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -84,7 +85,8 @@ public class UserController {
             registerUser.getFirstName(),
             registerUser.getLastName(),
             registerUser.getEmail(),
-            passwordService.hashPassword(registerUser.getPassword()));
+            passwordService.hashPassword(registerUser.getPassword()),
+            EncryptUtil.generateSalt());
 
       User savedUser = userService.createUser(user);
       JsonObject obj = new JsonObject();
