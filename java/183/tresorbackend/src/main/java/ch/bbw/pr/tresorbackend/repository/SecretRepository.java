@@ -11,4 +11,7 @@ import java.util.List;
  */
 public interface SecretRepository extends JpaRepository<Secret, Long> {
    List<Secret> findByUserId(Long userId);
+
+   @org.springframework.transaction.annotation.Transactional
+   void deleteByUserId(Long userId);
 }

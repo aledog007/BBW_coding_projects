@@ -53,20 +53,22 @@ export const postUser = async (content) => {
                 lastName: `${content.lastName}`,
                 email: `${content.email}`,
                 password: `${content.password}`,
-                passwordConfirmation: `${content.passwordConfirmation}`
+                passwordConfirmation: `${content.passwordConfirmation}`,
+                recaptchaToken: `${content.recaptchaToken}`
             })
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Server response failed.');
+            const errMsg = Array.isArray(errorData.message) ? errorData.message.join(', ') : errorData.message;
+            throw new Error(errMsg || 'Server response failed.');
         }
         const data = await response.json();
         console.log('User successfully posted:', data);
         return data;
     } catch (error) {
         console.error('Failed to post user:', error.message);
-        throw new Error('Failed to save user. ' || error.message);
+        throw new Error('Failed to save user. ' + error.message);
     }
 };
 
@@ -100,5 +102,61 @@ export const postUserLogin = async (content) => {
     } catch (error) {
         console.error('Failed to login user:', error.message);
         throw new Error('Failed to login user. ' + error.message);
+    }
+};
+
+export const postForgotPassword = async (email) => {
+    const protocol = process.env.REACT_APP_API_PROTOCOL;
+    const host = process.env.REACT_APP_API_HOST;
+    const port = process.env.REACT_APP_API_PORT;
+    const path = process.env.REACT_APP_API_PATH;
+    const portPart = port ? `:${port}` : '';
+    const API_URL = `${protocol}://${host}${portPart}${path}`;
+
+    try {
+        const response = await fetch(`${API_URL}/users/forgot-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Server response failed.');
+        }
+        return await response.json();
+    } catch (error) {
+        throw new Error('Failed to send forgot password request. ' + error.message);
+    }
+};
+
+export const postResetPassword = async (content) => {
+    const protocol = process.env.REACT_APP_API_PROTOCOL;
+    const host = process.env.REACT_APP_API_HOST;
+    const port = process.env.REACT_APP_API_PORT;
+    const path = process.env.REACT_APP_API_PATH;
+    const portPart = port ? `:${port}` : '';
+    const API_URL = `${protocol}://${host}${portPart}${path}`;
+
+    try {
+        const response = await fetch(`${API_URL}/users/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: content.token,
+                password: content.password,
+                passwordConfirmation: content.passwordConfirmation
+            })
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.join ? errorData.join(', ') : 'Server response failed.');
+        }
+        return await response.json();
+    } catch (error) {
+        throw new Error('Failed to reset password. ' + error.message);
     }
 };

@@ -35,4 +35,10 @@ public class User {
 
    @Column
    private String salt;
+
+   @Column(name = "reset_token")
+   private String resetToken;
+
+   @Column(name = "reset_token_expiry")
+   private java.time.LocalDateTime resetTokenExpiry;
 }

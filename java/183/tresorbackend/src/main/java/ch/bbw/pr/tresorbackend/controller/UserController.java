@@ -26,12 +26,20 @@ import ch.bbw.pr.tresorbackend.model.EmailAdress;
 import ch.bbw.pr.tresorbackend.model.LoginResponse;
 import ch.bbw.pr.tresorbackend.model.LoginUser;
 import ch.bbw.pr.tresorbackend.model.RegisterUser;
+import ch.bbw.pr.tresorbackend.model.ResetPasswordRequest;
 import ch.bbw.pr.tresorbackend.model.User;
 import ch.bbw.pr.tresorbackend.service.PasswordEncryptService;
+import ch.bbw.pr.tresorbackend.service.PasswordResetService;
 import ch.bbw.pr.tresorbackend.service.UserService;
 import ch.bbw.pr.tresorbackend.util.EncryptUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * UserController
@@ -39,12 +47,21 @@ import lombok.AllArgsConstructor;
  * @author Peter Rutschmann
  */
 @RestController
-@AllArgsConstructor
 @RequestMapping("api/users")
 public class UserController {
 
    private UserService userService;
    private PasswordEncryptService passwordService;
+   private PasswordResetService passwordResetService;
+
+   @Value("${recaptcha.secret.key:6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe}")
+   private String recaptchaSecret;
+
+   public UserController(UserService userService, PasswordEncryptService passwordService, PasswordResetService passwordResetService) {
+      this.userService = userService;
+      this.passwordService = passwordService;
+      this.passwordResetService = passwordResetService;
+   }
    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
    // build create User REST API
@@ -53,8 +70,9 @@ public class UserController {
    public ResponseEntity<String> createUser(@Valid @RequestBody RegisterUser registerUser,
          BindingResult bindingResult) {
       // captcha
-      // todo add implementation
-
+      if (registerUser.getRecaptchaToken() == null || !verifyCaptcha(registerUser.getRecaptchaToken())) {
+          return ResponseEntity.badRequest().body("{\"message\": [\"Captcha validation failed\"]}");
+      }
       System.out.println("UserController.createUser: captcha passed.");
 
       // input validation
@@ -76,7 +94,9 @@ public class UserController {
       System.out.println("UserController.createUser: input validation passed");
 
       // password validation
-      // todo add implementation
+      if (!registerUser.getPassword().equals(registerUser.getPasswordConfirmation())) {
+          return ResponseEntity.badRequest().body("{\"message\": [\"Password and Password-Confirmation do not match.\"]}");
+      }
       System.out.println("UserController.createUser, password validation passed");
 
       // transform registerUser to user
@@ -86,7 +106,9 @@ public class UserController {
             registerUser.getLastName(),
             registerUser.getEmail(),
             passwordService.hashPassword(registerUser.getPassword()),
-            EncryptUtil.generateSalt());
+            EncryptUtil.generateSalt(),
+            null,
+            null);
 
       User savedUser = userService.createUser(user);
       JsonObject obj = new JsonObject();
@@ -221,4 +243,61 @@ public class UserController {
       return ResponseEntity.ok(new LoginResponse("Login successful", user.getId()));
    }
 
+   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+   @PostMapping("/forgot-password")
+   public ResponseEntity<?> forgotPassword(@RequestBody EmailAdress emailAdress) {
+       User user = userService.findByEmail(emailAdress.getEmail());
+       // Always return OK to prevent email enumeration
+       if (user != null) {
+           passwordResetService.createPasswordResetTokenForUser(user);
+       }
+       return ResponseEntity.ok("{\"message\": \"If the email exists, a reset link has been sent.\"}");
+   }
+
+   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+   @PostMapping("/reset-password")
+   public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request, BindingResult bindingResult) {
+       if (bindingResult.hasErrors()) {
+           List<String> errors = bindingResult.getFieldErrors().stream()
+                   .map(fieldError -> fieldError.getDefaultMessage())
+                   .collect(Collectors.toList());
+           return ResponseEntity.badRequest().body(errors);
+       }
+
+       if (!request.getPassword().equals(request.getPasswordConfirmation())) {
+           return ResponseEntity.badRequest().body(List.of("Passwords do not match."));
+       }
+
+       if (!passwordResetService.validatePasswordResetToken(request.getToken())) {
+           return ResponseEntity.badRequest().body(List.of("Invalid or expired token."));
+       }
+
+       User user = passwordResetService.getUserByPasswordResetToken(request.getToken());
+       if (user == null) {
+           return ResponseEntity.badRequest().body(List.of("Invalid token."));
+       }
+
+       passwordResetService.changeUserPassword(user, request.getPassword());
+       return ResponseEntity.ok("{\"message\": \"Password successfully reset.\"}");
+   }
+
+   private boolean verifyCaptcha(String token) {
+       try {
+           String url = "https://www.google.com/recaptcha/api/siteverify";
+           String params = "secret=" + recaptchaSecret + "&response=" + token;
+
+           HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+           conn.setRequestMethod("POST");
+           conn.setDoOutput(true);
+           conn.getOutputStream().write(params.getBytes(StandardCharsets.UTF_8));
+
+           Scanner scanner = new Scanner(conn.getInputStream());
+           String response = scanner.useDelimiter("\\A").next();
+           scanner.close();
+
+           return response.contains("\"success\": true");
+       } catch (Exception e) {
+           return false;
+       }
+   }
 }
