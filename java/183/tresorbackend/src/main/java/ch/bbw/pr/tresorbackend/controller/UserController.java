@@ -64,8 +64,7 @@ public class UserController {
    }
    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-   // build create User REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+    // build create User REST API
    @PostMapping
    public ResponseEntity<String> createUser(@Valid @RequestBody RegisterUser registerUser,
          BindingResult bindingResult) {
@@ -100,15 +99,15 @@ public class UserController {
       System.out.println("UserController.createUser, password validation passed");
 
       // transform registerUser to user
-      User user = new User(
-            null,
-            registerUser.getFirstName(),
-            registerUser.getLastName(),
-            registerUser.getEmail(),
-            passwordService.hashPassword(registerUser.getPassword()),
-            EncryptUtil.generateSalt(),
-            null,
-            null);
+      User user = new User();
+      user.setFirstName(registerUser.getFirstName());
+      user.setLastName(registerUser.getLastName());
+      user.setEmail(registerUser.getEmail());
+      user.setPassword(passwordService.hashPassword(registerUser.getPassword()));
+      user.setSalt(EncryptUtil.generateSalt());
+      user.setRole("ROLE_USER");
+      user.setTwoFactorEnabled(false);
+      user.setFailedLoginAttempts(0);
 
       User savedUser = userService.createUser(user);
       JsonObject obj = new JsonObject();
@@ -126,7 +125,6 @@ public class UserController {
 
    // build get user by id REST API
    // http://localhost:8080/api/users/1
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @GetMapping("{id}")
    public ResponseEntity<User> getUserById(@PathVariable("id") Long userId) {
       User user = userService.getUserById(userId);
@@ -137,7 +135,7 @@ public class UserController {
 
    // Build Get All Users REST API
    // http://localhost:8080/api/users
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+   @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ROLE_ADMIN')")
    @GetMapping
    public ResponseEntity<List<User>> getAllUsers() {
       List<User> users = userService.getAllUsers();
@@ -148,7 +146,6 @@ public class UserController {
 
    // Build Update User REST API
    // http://localhost:8080/api/users/1
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PutMapping("{id}")
    public ResponseEntity<User> updateUser(@PathVariable("id") Long userId,
          @RequestBody User user) {
@@ -160,7 +157,7 @@ public class UserController {
    }
 
    // Build Delete User REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+   @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ROLE_ADMIN')")
    @DeleteMapping("{id}")
    public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
       if (userService.deleteUser(userId))
@@ -169,7 +166,6 @@ public class UserController {
    }
 
    // get user id by email
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping("/byemail")
    public ResponseEntity<String> getUserIdByEmail(@RequestBody EmailAdress email, BindingResult bindingResult) {
       System.out.println("UserController.getUserIdByEmail: " + email);
@@ -211,7 +207,7 @@ public class UserController {
    }
 
    // simple login with no websecurity, just name and password
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+   // DEPRECATED: Bitte AuthController für Login nutzen
    @PostMapping("/login")
    public ResponseEntity<LoginResponse> doLoginUser(@RequestBody LoginUser loginUser, BindingResult bindingResult) {
       System.out.println("UserController.doLoginUser: " + loginUser);
@@ -243,7 +239,6 @@ public class UserController {
       return ResponseEntity.ok(new LoginResponse("Login successful", user.getId()));
    }
 
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping("/forgot-password")
    public ResponseEntity<?> forgotPassword(@RequestBody EmailAdress emailAdress) {
        User user = userService.findByEmail(emailAdress.getEmail());
@@ -254,7 +249,6 @@ public class UserController {
        return ResponseEntity.ok("{\"message\": \"If the email exists, a reset link has been sent.\"}");
    }
 
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping("/reset-password")
    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request, BindingResult bindingResult) {
        if (bindingResult.hasErrors()) {

@@ -57,9 +57,10 @@ public class Aufgabe2_WahlenZuerich {
                     .filter(teile -> teile.length >= 11)
 
                     // Hier filtern wir alle Zeilen raus, die nicht zu unserer Gemeinde gehören.
-                    // Spalte 3 ist "Einheit_Name", und wir entfernen die Anführungszeichen
-                    // mit replace damit der Vergleich klappt.
-                    .filter(teile -> teile[3].replace("\"", "").trim().equals("Affoltern am Albis"))
+                    // Spalte 3 ist "Einheit_Name". Aus Effizienzgründen vergleichen wir
+                    // direkt mit dem String inklusive Anführungszeichen, damit wir
+                    // replace() nicht für jede einzelne Zeile im CSV ausführen müssen.
+                    .filter(teile -> teile[3].trim().equals("\"Affoltern am Albis\""))
 
                     // Jetzt gruppieren wir nach Partei (Spalte 7) und summieren
                     // die Parteistimmen (Spalte 10) auf.
@@ -70,8 +71,14 @@ public class Aufgabe2_WahlenZuerich {
                             teile -> teile[7].replace("\"", "").trim(),
 
                             // Wert: Summe der Parteistimmen (Spalte 10), auch Anführungszeichen weg
-                            Collectors.summingLong(teile ->
-                                    Long.parseLong(teile[10].replace("\"", "").trim()))
+                            // Zur Sicherheit (Pingeligkeit) mit try-catch um leere oder ungültige Einträge abzufangen
+                            Collectors.summingLong(teile -> {
+                                try {
+                                    return Long.parseLong(teile[10].replace("\"", "").trim());
+                                } catch (NumberFormatException ex) {
+                                    return 0L; // Bei fehlerhaften Daten einfach 0 addieren
+                                }
+                            })
                     ));
 
             // Gesamtstimmen berechnen das brauchen wir für die Prozentberechnung.

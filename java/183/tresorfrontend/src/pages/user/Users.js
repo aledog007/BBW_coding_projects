@@ -1,6 +1,7 @@
 import '../../App.css';
 import React, {useEffect, useState} from "react";
 import {getUsers} from "../../comunication/FetchUser";
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * Users
@@ -9,11 +10,12 @@ import {getUsers} from "../../comunication/FetchUser";
 const Users = ({loginValues}) => {
     const [users, setUsers] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
+    const { accessToken } = useAuth();
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const users = await getUsers();
+                const users = await getUsers(accessToken);
                 console.log(users);
                 setUsers(users);
             } catch (error) {

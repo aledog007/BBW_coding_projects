@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Archives
+*.zip
+*.tar.gz
+
+# IDE & Editor
+.idea/
+*.iml
+.vscode/
+
+# Build artifacts
+target/
+dist/
+build/
+node_modules/
+*.log
+
+# Secrets & Environment
+*.env
+*.env.local

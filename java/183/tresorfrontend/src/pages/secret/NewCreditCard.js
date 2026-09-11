@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {postSecret} from "../../comunication/FetchSecrets";
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * NewCreditCard
  * @author Peter Rutschmann
  */
-function NewCreditCard({loginValues}) {
+const NewCreditCard = () => {
     const initialState = {
         kindid: 2,
         kind:"creditcard",
@@ -17,6 +18,8 @@ function NewCreditCard({loginValues}) {
     };
     const [creditCardValues, setCreditCardValues] = useState(initialState);
     const [errorMessage, setErrorMessage] = useState('');
+    const { accessToken, user, encryptPassword } = useAuth();
+    const loginValues = { email: user?.email, password: encryptPassword || "OAUTH_DEFAULT" };
 
     const navigate = useNavigate();
 
@@ -25,7 +28,7 @@ function NewCreditCard({loginValues}) {
         setErrorMessage('');
         try {
             const content = creditCardValues;
-            await postSecret({loginValues, content});
+            await postSecret({loginValues, content, token: accessToken});
             setCreditCardValues(initialState);
             navigate('/secret/secrets');
         } catch (error) {

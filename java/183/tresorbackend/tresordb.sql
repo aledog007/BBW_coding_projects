@@ -15,6 +15,11 @@ CREATE TABLE user (
     salt VARCHAR(255),
     reset_token VARCHAR(255),
     reset_token_expiry DATETIME,
+    role VARCHAR(20) NOT NULL DEFAULT 'ROLE_USER',
+    totp_secret VARCHAR(255) DEFAULT NULL,
+    two_factor_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    failed_login_attempts INT NOT NULL DEFAULT 0,
+    account_locked_until DATETIME DEFAULT NULL,
     PRIMARY KEY (id)
 );
 
@@ -25,9 +30,3 @@ CREATE TABLE secret (
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
-
-INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `salt`, `reset_token`, `reset_token_expiry`) VALUES
-(1, 'Hans', 'Muster', 'hans.muster@bbw.ch', 'abcd', 'S0FNRUxfU0FMVF8xMjM=', NULL, NULL),
-(2, 'Paula', 'Kuster', 'paula.kuster@bbw.ch', 'efgh', 'U0FMVF9QQVVMQV80NTY=', NULL, NULL),
-(3, 'Andrea', 'Oester', 'andrea.oester@bbw.ch', 'ijkl', 'QU5EUkVBX1NBTFRfNzg5', NULL, NULL);
-

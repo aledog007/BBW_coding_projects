@@ -1,10 +1,13 @@
 package ch.bbw.pr.tresorbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 /**
  * User
@@ -30,6 +33,7 @@ public class User {
    @Column(nullable = false, unique = true)
    private String email;
 
+   @JsonIgnore
    @Column(nullable = false)
    private String password;
 
@@ -40,5 +44,21 @@ public class User {
    private String resetToken;
 
    @Column(name = "reset_token_expiry")
-   private java.time.LocalDateTime resetTokenExpiry;
+   private LocalDateTime resetTokenExpiry;
+
+   @Column(nullable = false)
+   private String role = "ROLE_USER";
+
+   @JsonIgnore
+   @Column(name = "totp_secret")
+   private String totpSecret;
+
+   @Column(name = "two_factor_enabled", nullable = false)
+   private boolean twoFactorEnabled = false;
+
+   @Column(name = "failed_login_attempts", nullable = false)
+   private int failedLoginAttempts = 0;
+
+   @Column(name = "account_locked_until")
+   private LocalDateTime accountLockedUntil;
 }

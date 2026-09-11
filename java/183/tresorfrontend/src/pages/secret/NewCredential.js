@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {postSecret} from "../../comunication/FetchSecrets";
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * NewCredential
  * @author Peter Rutschmann
  */
-function NewCredential({loginValues}) {
+const NewCredential = () => {
     const initialState = {
         kindid: 1,
         kind:"credential",
@@ -16,6 +17,8 @@ function NewCredential({loginValues}) {
     };
     const [credentialValues, setCredentialValues] = useState(initialState);
     const [errorMessage, setErrorMessage] = useState('');
+    const { accessToken, user, encryptPassword } = useAuth();
+    const loginValues = { email: user?.email, password: encryptPassword || "OAUTH_DEFAULT" };
 
     const navigate = useNavigate();
 
@@ -25,7 +28,7 @@ function NewCredential({loginValues}) {
         console.log(loginValues)
         try {
             const content = credentialValues;
-            await postSecret({loginValues, content});
+            await postSecret({loginValues, content, token: accessToken});
             setCredentialValues(initialState);
             navigate('/secret/secrets');
         } catch (error) {

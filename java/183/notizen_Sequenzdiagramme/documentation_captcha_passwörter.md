@@ -83,7 +83,10 @@ Ein vollständiger Flow zur Wiederherstellung des Passworts wurde implementiert.
 - **Frontend**:
   - `ForgotPassword.js`: Nimmt eine E-Mail-Adresse entgegen.
   - `ResetPassword.js`: Nimmt den Token aus der URL entgegen, lässt den User ein neues Passwort eingeben (inkl. Stärke-Prüfung) und sendet alles ans Backend.
-  - Sicherheit: Beim Request eines neuen Passworts wird vom Backend unabhängig vom Existieren der E-Mail die gleiche Meldung zurückgegeben, um E-Mail-Enumeration zu verhindern.
+- **Sicherheit & Spamschutz**:
+  - **E-Mail Enumeration**: Beim Request eines neuen Passworts wird vom Backend unabhängig vom Existieren der E-Mail die gleiche Meldung zurückgegeben, um E-Mail-Enumeration zu verhindern.
+  - **Massives Senden blockiert**: Um Spam zu verhindern, prüft das Backend bei der Anfrage eines neuen Tokens, ob in den letzten 5 Minuten bereits ein Token für diesen User generiert wurde. Ist dies der Fall, wird die Anfrage stumm ignoriert ("Spam Protection").
+  - **Abgelaufene Token gelöscht**: Wenn ein User versucht, ein abgelaufenes Token (> 1 Stunde) einzulösen, wird das Token nicht nur abgelehnt, sondern aktiv aus der Datenbank gelöscht (`user.setResetToken(null)`), um Datenmüll zu verhindern.
 
 ### Problematik alte verschlüsselte Secrets
 **Problem:** Da die App die Passwörter (bzw. Hashes) als Schlüssel zur Entschlüsselung der Secrets der User verwendet, gehen bei einem Passwort-Reset die alten Verschlüsselungs-Schlüssel unweigerlich verloren. Die alten Daten im Tresor können mit dem neuen Passwort nicht mehr entschlüsselt werden und würden als kryptischer Datenmüll im UI angezeigt werden oder zu Fehlern führen.

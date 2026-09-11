@@ -4,7 +4,7 @@
  */
 
 
-export const getUsers = async () => {
+export const getUsers = async (token) => {
     const protocol = process.env.REACT_APP_API_PROTOCOL; // "http"
     const host = process.env.REACT_APP_API_HOST; // "localhost"
     const port = process.env.REACT_APP_API_PORT; // "8080"
@@ -16,7 +16,8 @@ export const getUsers = async () => {
         const response = await fetch(`${API_URL}/users`, {
             method: 'Get',
             headers: {
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
 

@@ -1,6 +1,7 @@
 import '../../App.css';
 import React, {useEffect, useState} from 'react';
 import {getSecretsforUser, deleteSecret, updateSecret} from "../../comunication/FetchSecrets";
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * Secrets - Hauptkomponente zur Anzeige und Verwaltung der Tresor-Inhalte.
@@ -8,11 +9,15 @@ import {getSecretsforUser, deleteSecret, updateSecret} from "../../comunication/
  * 
  * @author Peter Rutschmann / Antigravity
  */
-const Secrets = ({loginValues}) => {
+const Secrets = () => {
     const [secrets, setSecrets] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const [editingSecret, setEditingSecret] = useState(null);
     const [editContent, setEditContent] = useState({});
+    const { accessToken, user, encryptPassword } = useAuth();
+    
+    // AuthContext Werte anstelle von Props verwenden
+    const loginValues = { email: user?.email, password: encryptPassword || "OAUTH_DEFAULT" };
 
     // Funktion zum Laden der Secrets vom Server
     const fetchSecrets = async () => {
@@ -23,7 +28,7 @@ const Secrets = ({loginValues}) => {
             return;
         }
         try {
-            const data = await getSecretsforUser(loginValues);
+            const data = await getSecretsforUser({loginValues, token: accessToken});
             // Content verarbeiten: Falls es ein String ist (vom Server entschlüsselt), in JSON parsen
             const processedData = data.map(s => {
                 let parsedContent = s.content;
@@ -56,7 +61,7 @@ const Secrets = ({loginValues}) => {
     const handleDelete = async (secretId) => {
         if (window.confirm("Sind Sie sicher, dass Sie dieses Secret löschen möchten?")) {
             try {
-                await deleteSecret({loginValues, secretId});
+                await deleteSecret({loginValues, secretId, token: accessToken});
                 fetchSecrets(); // Liste aktualisieren
             } catch (error) {
                 alert("Fehler beim Löschen: " + error.message);
@@ -74,7 +79,7 @@ const Secrets = ({loginValues}) => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            await updateSecret({loginValues, secretId: editingSecret.id, content: editContent});
+            await updateSecret({loginValues, secretId: editingSecret.id, content: editContent, token: accessToken});
             setEditingSecret(null); // Modal schließen
             fetchSecrets(); // Liste aktualisieren
         } catch (error) {

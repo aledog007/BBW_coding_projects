@@ -12,7 +12,7 @@ public class Main {
         System.out.println("Starte Aufgabe 1: Einfache Grafik (Lieblingsfaecher)...");
         Aufgabe1_EinfacheGrafik.anzeigen();
 
-        // Aufgabe 2: Tortendiagramm mit Wahlergebnissen aus Aeugst am Albis
+        // Aufgabe 2: Tortendiagramm mit Wahlergebnissen aus Affoltern am Albis
         System.out.println("Starte Aufgabe 2: Wahlen Zuerich (Tortendiagramm)...");
         Aufgabe2_WahlenZuerich.anzeigen();
 

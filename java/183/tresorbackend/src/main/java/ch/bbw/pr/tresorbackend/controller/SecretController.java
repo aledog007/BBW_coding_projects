@@ -34,7 +34,6 @@ public class SecretController {
    private UserService userService;
 
    // create secret REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping
    public ResponseEntity<String> createSecret2(@Valid @RequestBody NewSecret newSecret, BindingResult bindingResult) {
       // input validation
@@ -73,7 +72,6 @@ public class SecretController {
    }
 
    // Build Get Secrets by userId REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping("/byuserid")
    public ResponseEntity<?> getSecretsByUserId(@RequestBody EncryptCredentials credentials) {
       User user = userService.getUserById(credentials.getUserId());
@@ -102,7 +100,6 @@ public class SecretController {
    }
 
    // Build Get Secrets by email REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PostMapping("/byemail")
    public ResponseEntity<?> getSecretsByEmail(@RequestBody EncryptCredentials credentials) {
       User user = userService.findByEmail(credentials.getEmail());
@@ -129,7 +126,7 @@ public class SecretController {
    }
 
    // Alle Secrets abrufen (für Admin/System Übersicht)
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
+   @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ROLE_ADMIN')")
    @GetMapping
    public ResponseEntity<List<Secret>> getAllSecrets() {
       List<Secret> secrets = secretService.getAllSecrets();
@@ -137,7 +134,6 @@ public class SecretController {
    }
 
    // Build Update Secret REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @PutMapping("{id}")
    public ResponseEntity<String> updateSecret(
          @PathVariable("id") Long secretId,
@@ -173,12 +169,10 @@ public class SecretController {
    }
 
    // Build Delete Secret REST API
-   @CrossOrigin(origins = "${CROSS_ORIGIN}")
    @DeleteMapping("{id}")
    public ResponseEntity<String> deleteSecret(
          @PathVariable("id") Long secretId,
-         @RequestParam String email,
-         @RequestParam String password) {
+         @RequestParam String email) {
       
       Secret secret = secretService.getSecretById(secretId);
       if (secret == null) return ResponseEntity.notFound().build();

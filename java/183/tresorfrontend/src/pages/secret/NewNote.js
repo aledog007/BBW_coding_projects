@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {postSecret} from "../../comunication/FetchSecrets";
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * NewNote
  * @author Peter Rutschmann
  */
-function NewNote({loginValues}) {
+const NewNote = () => {
     const initialState = {
         kindid: 3,
         kind:"note",
@@ -15,6 +16,8 @@ function NewNote({loginValues}) {
     };
     const [noteValues, setNoteValues] = useState(initialState);
     const [errorMessage, setErrorMessage] = useState('');
+    const { accessToken, user, encryptPassword } = useAuth();
+    const loginValues = { email: user?.email, password: encryptPassword || "OAUTH_DEFAULT" };
 
     const navigate = useNavigate();
 
@@ -23,7 +26,7 @@ function NewNote({loginValues}) {
         setErrorMessage('');
         try {
             const content = noteValues;
-            await postSecret({loginValues, content});
+            await postSecret({loginValues, content, token: accessToken});
             setNoteValues(initialState);
             navigate('/secret/secrets');
         } catch (error) {

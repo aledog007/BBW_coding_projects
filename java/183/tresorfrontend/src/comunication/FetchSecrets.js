@@ -14,12 +14,15 @@ const getBaseUrl = () => {
 };
 
 // Post secret to server
-export const postSecret = async ({loginValues, content}) => {
+export const postSecret = async ({loginValues, content, token}) => {
     const API_URL = getBaseUrl();
     try {
         const response = await fetch(`${API_URL}/secrets`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
                 email: loginValues.email,
                 encryptPassword: loginValues.password,
@@ -43,12 +46,15 @@ export const postSecret = async ({loginValues, content}) => {
 };
 
 // Get all secrets for a user
-export const getSecretsforUser = async (loginValues) => {
+export const getSecretsforUser = async ({loginValues, token}) => {
     const API_URL = getBaseUrl();
     try {
         const response = await fetch(`${API_URL}/secrets/byemail`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
                 email: loginValues.email,
                 encryptPassword: loginValues.password
@@ -79,12 +85,15 @@ export const getSecretsforUser = async (loginValues) => {
 };
 
 // Update existing secret
-export const updateSecret = async ({loginValues, secretId, content}) => {
+export const updateSecret = async ({loginValues, secretId, content, token}) => {
     const API_URL = getBaseUrl();
     try {
         const response = await fetch(`${API_URL}/secrets/${secretId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
                 email: loginValues.email,
                 encryptPassword: loginValues.password,
@@ -103,11 +112,14 @@ export const updateSecret = async ({loginValues, secretId, content}) => {
 };
 
 // Delete secret
-export const deleteSecret = async ({loginValues, secretId}) => {
+export const deleteSecret = async ({loginValues, secretId, token}) => {
     const API_URL = getBaseUrl();
     try {
-        const response = await fetch(`${API_URL}/secrets/${secretId}?email=${encodeURIComponent(loginValues.email)}&password=${encodeURIComponent(loginValues.password)}`, {
-            method: 'DELETE'
+        const response = await fetch(`${API_URL}/secrets/${secretId}?email=${encodeURIComponent(loginValues.email)}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {

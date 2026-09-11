@@ -18,6 +18,14 @@ public class PasswordResetService {
     private final ch.bbw.pr.tresorbackend.repository.SecretRepository secretRepository;
 
     public void createPasswordResetTokenForUser(User user) {
+        // Spam Protection: "massives Senden von Emails blocked"
+        // Wenn das Token-Ablaufdatum weiter als 55 Minuten in der Zukunft liegt, 
+        // wurde das Token erst vor weniger als 5 Minuten generiert. Wir ignorieren die Anfrage.
+        if (user.getResetTokenExpiry() != null && user.getResetTokenExpiry().isAfter(LocalDateTime.now().plusMinutes(55))) {
+            System.out.println("PasswordResetService: Spam Protection. Token was generated recently. Doing nothing.");
+            return;
+        }
+
         String token = UUID.randomUUID().toString();
         user.setResetToken(token);
         user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
@@ -40,6 +48,11 @@ public class PasswordResetService {
             User user = userOpt.get();
             if (user.getResetTokenExpiry().isAfter(LocalDateTime.now())) {
                 return true;
+            } else {
+                // Requirement: "abgelaufene Token gelöscht"
+                user.setResetToken(null);
+                user.setResetTokenExpiry(null);
+                userRepository.save(user);
             }
         }
         return false;

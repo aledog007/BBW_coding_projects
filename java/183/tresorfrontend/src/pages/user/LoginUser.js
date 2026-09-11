@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import {useState} from "react";
-import {postUserLogin} from "../../comunication/FetchUser";
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * LoginUser
@@ -11,16 +11,21 @@ function LoginUser({loginValues, setLoginValues}) {
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
+    const { login } = useAuth();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
-        console.log(loginValues);
 
         try {
-            await postUserLogin(loginValues);
-            navigate('/');
+            const result = await login(loginValues.email, loginValues.password);
+            if (result.requires2FA) {
+                navigate('/verify-2fa', { state: { tempToken: result.tempToken, password: loginValues.password } });
+            } else {
+                navigate('/');
+            }
         } catch (error) {
-            console.error('Failed to fetch to server:', error.message);
+            console.error('Failed to login:', error.message);
             setErrorMessage(error.message);
         }
     };
@@ -64,6 +69,21 @@ function LoginUser({loginValues, setLoginValues}) {
                 <button type="submit">Anmelden</button>
                 <div style={{ marginTop: '10px' }}>
                     <button type="button" onClick={() => navigate('/forgot-password')}>Passwort vergessen?</button>
+                </div>
+                <hr style={{ marginTop: '20px', marginBottom: '20px' }}/>
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <a href="http://localhost:8080/oauth2/authorization/google" 
+                       style={{
+                           display: 'inline-block',
+                           padding: '10px 20px',
+                           backgroundColor: '#4285F4',
+                           color: 'white',
+                           textDecoration: 'none',
+                           borderRadius: '5px',
+                           fontWeight: 'bold'
+                       }}>
+                        Mit Google einloggen
+                    </a>
                 </div>
             </form>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}

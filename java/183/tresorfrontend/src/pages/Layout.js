@@ -1,15 +1,24 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 /**
  * Layout
  * @author Peter Rutschmann
  */
 const Layout = ({loginValues}) => {
+    const { user, isAuthenticated, isAdmin, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        logout();
+        navigate('/');
+    };
     return (
         <>
             <nav>
                 <h1>The secret tresor application</h1>
-                <p>{loginValues.email === '' ? 'No user logged in' : 'user:' + loginValues.email}</p>
+                <p>{isAuthenticated ? `user: ${user.email}` : 'No user logged in'}</p>
                 <ul>
                     <li><span>Secrets</span>
                     <ul>
@@ -22,8 +31,14 @@ const Layout = ({loginValues}) => {
                     <li><span>User</span>
                         <ul>
                             <li><Link to="/user/register">register</Link></li>
-                            <li><Link to="/user/login">login</Link></li>
-                            <li><a href="/">logout</a></li> {/* as no link it will reload an cleanup useStates*/}
+                            {isAuthenticated ? (
+                                <>
+                                    <li><Link to="/setup-2fa">2FA einrichten</Link></li>
+                                    <li><a href="/" onClick={handleLogout}>logout</a></li>
+                                </>
+                            ) : (
+                                <li><Link to="/user/login">login</Link></li>
+                            )}
                         </ul>
                     </li>
                     <li><span>Admin</span>
