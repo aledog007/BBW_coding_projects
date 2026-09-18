@@ -39,9 +39,7 @@ sequenceDiagram
     Client-->>User: Zeigt Secrets an (User hat nichts vom Reload bemerkt!)
 ```
 
-## 2. Wo findest du was im Code? (Dein Spickzettel)
-
-Wenn dein Dozent fragt: *"Zeig mir mal im Code, wo das passiert..."*, dann schlägst du genau hier nach. Klicke auf die Links, um direkt in die Dateien zu kommen.
+## 2. Wo ist was im Code?
 
 ### 🔑 Schritt 1: Initialer Login (Passwort prüfen & 2FA Check)
 *   **Frontend:** Wenn der User auf "Anmelden" klickt, wird die Datei [`LoginUser.js`](file:///Users/taafaal4/Documents/coding_schule/BBW_coding_projects/java/183/tresorfrontend/src/pages/user/LoginUser.js) aktiv. Sie ruft die zentrale Login-Funktion im [`AuthContext.js`](file:///Users/taafaal4/Documents/coding_schule/BBW_coding_projects/java/183/tresorfrontend/src/context/AuthContext.js) auf.
